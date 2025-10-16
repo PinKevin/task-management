@@ -14,10 +14,12 @@ export class AuthService {
   ) {}
 
   async login(loginDto: LoginDto) {
-    const user = await this.usersService.findOneByUsername(loginDto.username);
+    const user = await this.usersService.findOneByUsernameWithPassword(
+      loginDto.username,
+    );
 
     if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
-      throw new UnauthorizedException('Username atau password salah');
+      throw new UnauthorizedException('Wrong username or password');
     }
     const payload: JwtPayload = {
       userId: user.userId,

@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from './tasks.entity';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { User } from 'src/users/users.entity';
 import { CreateTaskDto } from './dto/createTask.dto';
 import { UsersService } from 'src/users/users.service';
 import { GetTaskParamsDto } from './dto/getTaskParams.dto';
 import { GetAllTasksQueryDto } from './dto/getAllTasksQuery.dto';
+import { UpdateTaskDto } from './dto/updateTask.dto';
 
 @Injectable()
 export class TasksService {
@@ -31,12 +32,17 @@ export class TasksService {
       .limit(10)
       .offset(offset);
 
-    queryBuilder.where('task.user_id = :userId OR task.created_by = :userId', {
-      userId: user.userId,
-    });
+    queryBuilder.where(
+      new Brackets((qb) => {
+        qb.where('task.user = :userId', { userId: user.userId }).orWhere(
+          'task.creator = :userId',
+          { userId: user.userId },
+        );
+      }),
+    );
 
     if (query.status) {
-      queryBuilder.where('task.status = :status', {
+      queryBuilder.andWhere('task.status = :status', {
         status: query.status,
       });
     }
@@ -54,10 +60,11 @@ export class TasksService {
   async getTask(user: User, getTaskParamsDto: GetTaskParamsDto) {
     const taskId = parseInt(getTaskParamsDto.taskId);
     const task = await this.taskRepository.findOne({
-      where: {
-        taskId,
-        user,
-      },
+      where: [
+        { taskId: taskId, user: { userId: user.userId } },
+        { taskId: taskId, creator: { userId: user.userId } },
+      ],
+      relations: ['user', 'creator'],
     });
 
     return (
@@ -65,6 +72,47 @@ export class TasksService {
         message: 'Task not found',
       }
     );
+  }
+
+  async updateTask(user: User, taskId: number, updateTaskDto: UpdateTaskDto) {
+    const taskToUpdate = await this.taskRepository.findOne({
+      where: [
+        { taskId, user: { userId: user.userId } },
+        { taskId, creator: { userId: user.userId } },
+      ],
+    });
+    if (!taskToUpdate) {
+      throw new NotFoundException('Task not found');
+    }
+
+    if (updateTaskDto.title) {
+      taskToUpdate.title = updateTaskDto.title;
+    }
+    if (updateTaskDto.description) {
+      taskToUpdate.description = updateTaskDto.description;
+    }
+    if (updateTaskDto.status) {
+      taskToUpdate.status = updateTaskDto.status;
+    }
+    if (updateTaskDto.deadline) {
+      taskToUpdate.deadline = updateTaskDto.deadline;
+    }
+
+    if (updateTaskDto.userId) {
+      const assignedUser = await this.usersService.findOneByUserId(
+        updateTaskDto.userId,
+      );
+      if (!assignedUser) {
+        throw new NotFoundException(`Selected user not found`);
+      }
+      taskToUpdate.user = assignedUser;
+    }
+
+    await this.taskRepository.save(taskToUpdate);
+
+    return {
+      message: 'Successfully edit task',
+    };
   }
 
   async createTask(createTaskDto: CreateTaskDto, creator: User) {
@@ -84,7 +132,7 @@ export class TasksService {
     await this.taskRepository.save(newTask);
 
     return {
-      message: 'Berhasil membuat task baru',
+      message: 'Successfully create new task',
     };
   }
 }

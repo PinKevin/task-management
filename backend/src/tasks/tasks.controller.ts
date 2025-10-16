@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   Req,
@@ -14,6 +15,7 @@ import { CreateTaskDto } from './dto/createTask.dto';
 import type { Request } from 'express';
 import { GetTaskParamsDto } from './dto/getTaskParams.dto';
 import { GetAllTasksQueryDto } from './dto/getAllTasksQuery.dto';
+import { UpdateTaskDto } from './dto/updateTask.dto';
 
 @Controller('tasks')
 @UseGuards(AuthGuard)
@@ -37,5 +39,16 @@ export class TasksController {
   async getTask(@Req() req: Request, @Param() params: GetTaskParamsDto) {
     const user = req.user;
     return await this.tasksServices.getTask(user, params);
+  }
+
+  @Patch(':taskId')
+  async updateTask(
+    @Req() req: Request,
+    @Param() params: GetTaskParamsDto,
+    @Body() updateTaskDto: UpdateTaskDto,
+  ) {
+    const user = req.user;
+    const taskId = parseInt(params.taskId);
+    return this.tasksServices.updateTask(user, taskId, updateTaskDto);
   }
 }

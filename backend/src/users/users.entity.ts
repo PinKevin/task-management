@@ -12,7 +12,7 @@ export class User {
   @Column({ type: 'character varying', unique: true })
   username: string;
 
-  @Column({ type: 'character varying' })
+  @Column({ type: 'character varying', select: false })
   password: string;
 
   @OneToMany(() => Task, (task) => task.user)

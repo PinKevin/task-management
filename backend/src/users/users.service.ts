@@ -16,6 +16,14 @@ export class UsersService {
     return await this.userRepository.findOneBy({ username });
   }
 
+  async findOneByUsernameWithPassword(username: string): Promise<User | null> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .where('user.username = :username', { username })
+      .addSelect('user.password')
+      .getOne();
+  }
+
   async findOneByUserId(userId: number): Promise<User | null> {
     return await this.userRepository.findOneBy({ userId });
   }
