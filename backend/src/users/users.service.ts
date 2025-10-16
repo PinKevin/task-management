@@ -30,11 +30,12 @@ export class UsersService {
       saltRounds,
     );
 
-    const savedUser = this.userRepository.create({
+    const newUser = this.userRepository.create({
       ...createUserDto,
       password: hashedPassword,
     });
+    await this.userRepository.save(newUser);
 
-    return savedUser;
+    return newUser;
   }
 }

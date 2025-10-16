@@ -33,7 +33,10 @@ export class AuthService {
     const user = await this.usersService.createUser(createUserDto);
 
     return {
-      data: user,
+      data: {
+        name: user.name,
+        username: user.username,
+      },
     };
   }
 }
