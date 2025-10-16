@@ -6,11 +6,17 @@ import { Input } from './ui/input';
 import { Form, Link, useActionData } from 'react-router';
 
 interface ActionData {
-  error?: string;
+  errors?: {
+    name?: string;
+    username?: string;
+    password?: string;
+    confirmPassword?: string;
+  };
 }
 
 export function RegisterForm({ className, ...props }: React.ComponentProps<'div'>) {
   const actionData = useActionData() as ActionData;
+  const errors = actionData?.errors;
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -24,27 +30,33 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<'div'
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="name">Nama</FieldLabel>
-                <Input id="name" name="name" type="text" placeholder="Nama" required />
+                <Input id="name" name="name" type="text" placeholder="Nama" />
+                {errors?.name && <p className="text-sm text-red-500 mt-1">{errors?.name}</p>}
               </Field>
 
               <Field>
                 <FieldLabel htmlFor="username">Username</FieldLabel>
-                <Input id="username" name="username" type="text" placeholder="Username" required />
+                <Input id="username" name="username" type="text" placeholder="Username" />
+                {errors?.username && (
+                  <p className="text-sm text-red-500 mt-1">{errors?.username}</p>
+                )}
               </Field>
 
               <Field>
                 <FieldLabel htmlFor="password">Password</FieldLabel>
-                <Input id="password" name="password" type="password" required />
+                <Input id="password" name="password" type="password" />
+                {errors?.password && (
+                  <p className="text-sm text-red-500 mt-1">{errors?.password}</p>
+                )}
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="confirm-password">Konfirmasi Password</FieldLabel>
-                <Input id="confirm-password" name="confirm-password" type="password" required />
+                <FieldLabel htmlFor="confirmPassword">Konfirmasi Password</FieldLabel>
+                <Input id="confirmPassword" name="confirmPassword" type="password" />
+                {errors?.confirmPassword && (
+                  <p className="text-sm text-red-500 mt-1">{errors?.confirmPassword}</p>
+                )}
               </Field>
-
-              {actionData?.error && (
-                <p className="text-sm text-red-500 text-center">{actionData.error}</p>
-              )}
 
               <Field>
                 <Button type="submit">Daftar</Button>

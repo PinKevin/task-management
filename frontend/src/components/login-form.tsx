@@ -6,11 +6,16 @@ import { Input } from './ui/input';
 import { Form, Link, useActionData } from 'react-router';
 
 interface ActionData {
-  error?: string;
+  errors?: {
+    username?: string;
+    password?: string;
+  };
+  checkUserError?: string;
 }
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
   const actionData = useActionData() as ActionData;
+  const errors = actionData?.errors;
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -24,16 +29,22 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="username">Username</FieldLabel>
-                <Input id="username" name="username" type="text" placeholder="Username" required />
+                <Input id="username" name="username" type="text" placeholder="Username" />
+                {errors?.username && (
+                  <p className="text-sm text-red-500 mt-1">{errors?.username}</p>
+                )}
               </Field>
 
               <Field>
                 <FieldLabel htmlFor="password">Password</FieldLabel>
-                <Input id="password" name="password" type="password" required />
+                <Input id="password" name="password" type="password" />
+                {errors?.password && (
+                  <p className="text-sm text-red-500 mt-1">{errors?.password}</p>
+                )}
               </Field>
 
-              {actionData?.error && (
-                <p className="text-sm text-red-500 text-center">{actionData.error}</p>
+              {actionData?.checkUserError && (
+                <p className="text-sm text-red-500 text-center">{actionData.checkUserError}</p>
               )}
 
               <Field>

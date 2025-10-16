@@ -1,3 +1,4 @@
+import { formatErrors } from '@/helper/format-errors';
 import { registerUser } from '@/services/auth.service';
 import { redirect, type ActionFunctionArgs } from 'react-router';
 
@@ -9,6 +10,10 @@ export async function registerAction({ request }: ActionFunctionArgs) {
 
     return redirect('/login');
   } catch (error) {
-    return { error: (error as Error).message };
+    if (error instanceof Response) {
+      const errorData = await error.json();
+      return { errors: formatErrors(errorData.message) };
+    }
+    return { errors: 'Terjadi kesalahan tidak terduga.' };
   }
 }

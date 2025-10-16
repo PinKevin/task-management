@@ -1,3 +1,4 @@
+import { formatErrors } from '@/helper/format-errors';
 import { loginUser } from '@/services/auth.service';
 import { redirect, type ActionFunctionArgs } from 'react-router';
 
@@ -10,6 +11,14 @@ export async function loginAction({ request }: ActionFunctionArgs) {
     localStorage.setItem('accessToken', data.accessToken);
     return redirect('/');
   } catch (error) {
-    return { error: (error as Error).message };
+    if (error instanceof Response && error.status === 400) {
+      const errorData = await error.json();
+      return { errors: formatErrors(errorData.message) };
+    }
+    if (error instanceof Response && error.status === 401) {
+      const errorData = await error.json();
+      return { checkUserError: errorData.message };
+    }
+    return { error: 'Terjadi kesalahan tidak terduga.' };
   }
 }

@@ -16,7 +16,7 @@ export async function loginUser(loginDto: LoginDto): Promise<LoginResponse> {
   });
 
   if (!response.ok) {
-    throw new Error('Email atau password salah');
+    throw response;
   }
 
   return response.json();
@@ -32,7 +32,7 @@ export async function registerUser(registerDto: RegisterDto): Promise<RegisterRe
   });
 
   if (!response.ok) {
-    throw new Error(String(response.status));
+    throw response;
   }
 
   return response.json();
