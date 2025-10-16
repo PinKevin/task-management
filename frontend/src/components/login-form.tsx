@@ -3,8 +3,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Field, FieldDescription, FieldGroup, FieldLabel } from './ui/field';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+import { Form, Link, useActionData } from 'react-router';
+
+interface ActionData {
+  error?: string;
+}
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
+  const actionData = useActionData() as ActionData;
+
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
@@ -13,24 +20,33 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
           <CardDescription>Masuk menggunakan username dan password Anda</CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <Form method="post">
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="username">Username</FieldLabel>
-                <Input id="username" type="text" placeholder="Username" required />
+                <Input id="username" name="username" type="text" placeholder="Username" required />
               </Field>
+
               <Field>
                 <FieldLabel htmlFor="password">Password</FieldLabel>
-                <Input id="password" type="password" required />
+                <Input id="password" name="password" type="password" required />
               </Field>
+
+              {actionData?.error && (
+                <p className="text-sm text-red-500 text-center">{actionData.error}</p>
+              )}
+
               <Field>
                 <Button type="submit">Login</Button>
                 <FieldDescription className="text-center">
-                  Belum punya akun? <a href="/register">Daftar</a>
+                  Belum punya akun?{' '}
+                  <Link to={'/register'} className="underline">
+                    Daftar
+                  </Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
-          </form>
+          </Form>
         </CardContent>
       </Card>
     </div>
