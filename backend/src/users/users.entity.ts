@@ -6,13 +6,13 @@ export class User {
   @PrimaryGeneratedColumn({ name: 'user_id' })
   userId: number;
 
-  @Column({ type: 'char varying' })
+  @Column({ type: 'character varying' })
   name: string;
 
-  @Column({ type: 'char varying', unique: true })
+  @Column({ type: 'character varying', unique: true })
   username: string;
 
-  @Column({ type: 'char varying' })
+  @Column({ type: 'character varying' })
   password: string;
 
   @OneToMany(() => Task, (task) => task.user)

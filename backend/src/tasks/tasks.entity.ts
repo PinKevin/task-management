@@ -22,7 +22,7 @@ export class Task {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column({ type: 'char varying' })
+  @Column({ type: 'character varying' })
   title: string;
 
   @Column({ type: 'text' })
