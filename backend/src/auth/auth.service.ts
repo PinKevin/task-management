@@ -2,6 +2,8 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
+import { CreateUserDto } from 'src/users/dto/createUser.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -10,10 +12,10 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(inputUsername: string, inputPassword: string) {
-    const user = await this.usersService.findOneByUsername(inputUsername);
+  async login(loginDto: LoginDto) {
+    const user = await this.usersService.findOneByUsername(loginDto.username);
 
-    if (!user || !(await bcrypt.compare(inputPassword, user.password))) {
+    if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
       throw new UnauthorizedException('Username atau password salah');
     }
     const payload = {
@@ -24,6 +26,14 @@ export class AuthService {
 
     return {
       accessToken: await this.jwtService.signAsync(payload),
+    };
+  }
+
+  async register(createUserDto: CreateUserDto) {
+    const user = await this.usersService.createUser(createUserDto);
+
+    return {
+      data: user,
     };
   }
 }
