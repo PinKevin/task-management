@@ -8,9 +8,9 @@ import {
 } from 'typeorm';
 
 export enum TaskStatus {
-  ToDo = 'To Do',
-  InProgress = 'In Progress',
-  Done = 'Done',
+  TODO = 'TODO',
+  IN_PROGRESS = 'IN_PROGRESS',
+  DONE = 'DONE',
 }
 
 @Entity()
@@ -28,7 +28,7 @@ export class Task {
   @Column({ type: 'text' })
   description: string;
 
-  @Column({ type: 'enum', enum: TaskStatus, default: TaskStatus.ToDo })
+  @Column({ type: 'enum', enum: TaskStatus, default: TaskStatus.TODO })
   status: TaskStatus;
 
   @Column({ type: 'date' })

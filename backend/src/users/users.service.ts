@@ -12,12 +12,12 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
-  findOneByUsername(username: string): Promise<User | null> {
-    return this.userRepository.findOneBy({ username });
+  async findOneByUsername(username: string): Promise<User | null> {
+    return await this.userRepository.findOneBy({ username });
   }
 
-  findOneByUserId(userId: number): Promise<User | null> {
-    return this.userRepository.findOneBy({ userId });
+  async findOneByUserId(userId: number): Promise<User | null> {
+    return await this.userRepository.findOneBy({ userId });
   }
 
   async createUser(createUserDto: CreateUserDto) {
@@ -25,7 +25,7 @@ export class UsersService {
       where: { username: createUserDto.username },
     });
     if (existingUser) {
-      throw new ConflictException('Username sudah digunakan');
+      throw new ConflictException('Username already used');
     }
 
     const saltRounds = 10;
