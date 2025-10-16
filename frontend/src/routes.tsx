@@ -4,7 +4,7 @@ import LoginPage from './pages/login';
 import { loginAction } from './actions/login.action';
 import RegisterPage from './pages/register';
 import { registerAction } from './actions/register.action';
-import { DashboardPage } from './pages/dashboard';
+import DashboardPage from './pages/dashboard';
 import { guestLoader, protectedLoader } from './helper/auth-loader';
 
 export const router = createBrowserRouter([

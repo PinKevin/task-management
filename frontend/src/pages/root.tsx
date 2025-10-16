@@ -1,9 +1,10 @@
+import FullSidebar from '@/components/full-sidebar';
 import { Outlet } from 'react-router';
 
 export default function RootLayout() {
   return (
-    <div className="container mx-auto">
+    <FullSidebar>
       <Outlet />
-    </div>
+    </FullSidebar>
   );
 }
