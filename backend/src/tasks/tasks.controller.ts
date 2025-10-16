@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -38,7 +39,8 @@ export class TasksController {
   @Get(':taskId')
   async getTask(@Req() req: Request, @Param() params: GetTaskParamsDto) {
     const user = req.user;
-    return await this.tasksServices.getTask(user, params);
+    const taskId = parseInt(params.taskId);
+    return await this.tasksServices.getTask(user, taskId);
   }
 
   @Patch(':taskId')
@@ -50,5 +52,12 @@ export class TasksController {
     const user = req.user;
     const taskId = parseInt(params.taskId);
     return this.tasksServices.updateTask(user, taskId, updateTaskDto);
+  }
+
+  @Delete(':taskId')
+  async deleteTask(@Req() req: Request, @Param() params: GetTaskParamsDto) {
+    const user = req.user;
+    const taskId = parseInt(params.taskId);
+    return await this.tasksServices.deleteTask(user, taskId);
   }
 }

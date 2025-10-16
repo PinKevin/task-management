@@ -5,7 +5,6 @@ import { Brackets, Repository } from 'typeorm';
 import { User } from 'src/users/users.entity';
 import { CreateTaskDto } from './dto/createTask.dto';
 import { UsersService } from 'src/users/users.service';
-import { GetTaskParamsDto } from './dto/getTaskParams.dto';
 import { GetAllTasksQueryDto } from './dto/getAllTasksQuery.dto';
 import { UpdateTaskDto } from './dto/updateTask.dto';
 
@@ -17,6 +16,27 @@ export class TasksService {
 
     private usersService: UsersService,
   ) {}
+
+  async createTask(createTaskDto: CreateTaskDto, creator: User) {
+    const assignedUser = await this.usersService.findOneByUserId(
+      createTaskDto.userId,
+    );
+    if (!assignedUser) {
+      throw new NotFoundException(`Selected user not found`);
+    }
+
+    const newTask = this.taskRepository.create({
+      ...createTaskDto,
+      creator,
+      user: assignedUser,
+    });
+
+    await this.taskRepository.save(newTask);
+
+    return {
+      message: 'Successfully create new task',
+    };
+  }
 
   async getAllTasks(user: User, query: GetAllTasksQueryDto) {
     let pageNumber;
@@ -57,12 +77,11 @@ export class TasksService {
     return tasks;
   }
 
-  async getTask(user: User, getTaskParamsDto: GetTaskParamsDto) {
-    const taskId = parseInt(getTaskParamsDto.taskId);
+  async getTask(user: User, taskId: number) {
     const task = await this.taskRepository.findOne({
       where: [
-        { taskId: taskId, user: { userId: user.userId } },
-        { taskId: taskId, creator: { userId: user.userId } },
+        { taskId, user: { userId: user.userId } },
+        { taskId, creator: { userId: user.userId } },
       ],
       relations: ['user', 'creator'],
     });
@@ -115,24 +134,28 @@ export class TasksService {
     };
   }
 
-  async createTask(createTaskDto: CreateTaskDto, creator: User) {
-    const assignedUser = await this.usersService.findOneByUserId(
-      createTaskDto.userId,
-    );
-    if (!assignedUser) {
-      throw new NotFoundException(`Selected user not found`);
+  async deleteTask(user: User, taskId: number) {
+    const deleteResult = await this.taskRepository
+      .createQueryBuilder()
+      .delete()
+      .from(Task)
+      .where('taskId = :taskId', { taskId })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where('creator = :userId', { userId: user.userId }).orWhere(
+            'user = :userId',
+            { userId: user.userId },
+          );
+        }),
+      )
+      .execute();
+
+    if (deleteResult.affected === 0) {
+      throw new NotFoundException('Task not found');
     }
 
-    const newTask = this.taskRepository.create({
-      ...createTaskDto,
-      creator,
-      user: assignedUser,
-    });
-
-    await this.taskRepository.save(newTask);
-
     return {
-      message: 'Successfully create new task',
+      message: 'Successfully deleted task',
     };
   }
 }
