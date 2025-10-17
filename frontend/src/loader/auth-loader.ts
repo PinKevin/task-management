@@ -1,5 +1,5 @@
 import { redirect } from 'react-router';
-import { getToken } from './access-token-helper';
+import { getToken } from '../helper/access-token-helper';
 
 export function guestLoader() {
   const token = getToken();

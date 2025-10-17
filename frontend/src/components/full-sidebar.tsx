@@ -14,7 +14,7 @@ export default function FullSidebar({ children }: { children: React.ReactNode })
             <p>Task Management</p>
           </div>
         </header>
-        <div className="flex flex-row p-4">{children}</div>
+        <div className="flex flex-col p-4">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

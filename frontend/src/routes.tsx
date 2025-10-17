@@ -5,7 +5,9 @@ import { loginAction } from './actions/login.action';
 import RegisterPage from './pages/register';
 import { registerAction } from './actions/register.action';
 import DashboardPage from './pages/dashboard';
-import { guestLoader, protectedLoader } from './helper/auth-loader';
+import { guestLoader, protectedLoader } from './loader/auth-loader';
+import TaskPage from './pages/task/task';
+import { getAllTaskLoader } from './loader/tasks/get-all-loader';
 
 export const router = createBrowserRouter([
   {
@@ -16,6 +18,11 @@ export const router = createBrowserRouter([
       {
         index: true,
         Component: DashboardPage,
+      },
+      {
+        path: '/task',
+        Component: TaskPage,
+        loader: getAllTaskLoader,
       },
     ],
   },
