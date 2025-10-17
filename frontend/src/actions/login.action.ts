@@ -1,3 +1,4 @@
+import { setToken } from '@/helper/access-token-helper';
 import { formatErrors } from '@/helper/format-errors';
 import { loginUser } from '@/services/auth.service';
 import { redirect, type ActionFunctionArgs } from 'react-router';
@@ -8,7 +9,7 @@ export async function loginAction({ request }: ActionFunctionArgs) {
     const dto = Object.fromEntries(formData);
     const data = await loginUser(dto);
 
-    localStorage.setItem('accessToken', data.accessToken);
+    setToken(data.accessToken);
     return redirect('/');
   } catch (error) {
     if (error instanceof Response && error.status === 400) {

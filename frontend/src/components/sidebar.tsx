@@ -15,19 +15,18 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from '@/components/ui/sidebar';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { NavUser } from './nav-user';
 
 const data = {
   navMain: [
     {
       title: 'Home',
-      url: '#',
+      url: '/',
       items: [
         {
           title: 'Task',
           url: '/task',
-          isActive: true,
         },
       ],
     },
@@ -35,6 +34,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const location = useLocation();
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -58,16 +59,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             {data.navMain.map((item) => (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild>
-                  <a href={item.url} className="font-medium">
+                <SidebarMenuButton asChild isActive={location.pathname === item.url}>
+                  <Link to={item.url} className="font-medium">
                     {item.title}
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
                 {item.items?.length ? (
                   <SidebarMenuSub>
                     {item.items.map((item) => (
                       <SidebarMenuSubItem key={item.title}>
-                        <SidebarMenuSubButton asChild isActive={item.isActive}>
+                        <SidebarMenuSubButton asChild isActive={location.pathname === item.url}>
                           <Link to={item.url}>{item.title}</Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
@@ -80,7 +81,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={{ name: 'Kevin', email: 'email', avatar: 'avatar' }} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

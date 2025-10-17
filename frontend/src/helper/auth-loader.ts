@@ -1,7 +1,8 @@
 import { redirect } from 'react-router';
+import { getToken } from './access-token-helper';
 
 export function guestLoader() {
-  const token = localStorage.getItem('accessToken');
+  const token = getToken();
   if (token) {
     throw redirect('/');
   }
@@ -9,7 +10,7 @@ export function guestLoader() {
 }
 
 export function protectedLoader() {
-  const token = localStorage.getItem('accessToken');
+  const token = getToken();
   if (!token) {
     throw redirect('/login');
   }

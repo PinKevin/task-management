@@ -1,3 +1,4 @@
+import { getToken } from '@/helper/access-token-helper';
 import type {
   LoginDto,
   LoginResponse,
@@ -29,6 +30,27 @@ export async function registerUser(registerDto: RegisterDto): Promise<RegisterRe
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(registerDto),
+  });
+
+  if (!response.ok) {
+    throw response;
+  }
+
+  return response.json();
+}
+
+export async function getProfile() {
+  const token = getToken();
+  if (!token) {
+    throw new Error('Not authenticated');
+  }
+
+  const response = await fetch(`${BASE_URL}/auth/profile`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
   });
 
   if (!response.ok) {
