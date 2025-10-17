@@ -11,6 +11,9 @@ import { getAllTaskLoader } from './loader/tasks/get-all-loader';
 import CreateTaskPage from './pages/task/create-task';
 import { getAllUserLoader } from './loader/users/get-all-loader';
 import { createTaskAction } from './actions/tasks/create-task.action';
+import ViewTaskPage from './pages/task/view-task';
+import { getOneLoader } from './loader/tasks/get-one-loader';
+import NotFoundTask from './pages/task/not-found-task';
 
 export const router = createBrowserRouter([
   {
@@ -32,6 +35,12 @@ export const router = createBrowserRouter([
         Component: CreateTaskPage,
         loader: getAllUserLoader,
         action: createTaskAction,
+      },
+      {
+        path: '/tasks/:taskId',
+        Component: ViewTaskPage,
+        loader: getOneLoader,
+        ErrorBoundary: NotFoundTask,
       },
     ],
   },

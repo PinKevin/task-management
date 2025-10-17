@@ -60,3 +60,26 @@ export async function createTask(loginDto: TaskDto) {
 
   return response.json();
 }
+
+export async function getTask(id: string): Promise<Task> {
+  const token = getToken();
+  if (!token) {
+    throw new Error('Not authenticated');
+  }
+
+  const url = `${BASE_URL}/tasks/${id}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw response;
+  }
+
+  return response.json() as Promise<Task>;
+}

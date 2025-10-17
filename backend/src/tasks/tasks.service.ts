@@ -85,12 +85,11 @@ export class TasksService {
       ],
       relations: ['user', 'creator'],
     });
+    if (!task) {
+      throw new NotFoundException('Task not found');
+    }
 
-    return (
-      task ?? {
-        message: 'Task not found',
-      }
-    );
+    return task;
   }
 
   async updateTask(user: User, taskId: number, updateTaskDto: UpdateTaskDto) {

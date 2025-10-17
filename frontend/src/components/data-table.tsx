@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
+import { getStatusLabel } from '@/helper/get-status-label';
 
 interface TasksData {
   tasks: Task[];
@@ -25,19 +26,6 @@ interface DataTableProps {
 
 export function DataTable({ onSort, currentDeadlineOrder }: DataTableProps) {
   const { tasks } = useLoaderData() as TasksData;
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'TODO':
-        return 'To Do';
-      case 'IN_PROGRESS':
-        return 'In Progress';
-      case 'DONE':
-        return 'Done';
-      default:
-        return status;
-    }
-  };
 
   return (
     <Table>
@@ -77,7 +65,9 @@ export function DataTable({ onSort, currentDeadlineOrder }: DataTableProps) {
           tasks.map((task, index) => (
             <TableRow key={task.taskId}>
               <TableCell className="font-medium">{index + 1}</TableCell>
-              <TableCell>{task.title}</TableCell>
+              <TableCell>
+                <Link to={`/tasks/${task.taskId}`}>{task.title}</Link>
+              </TableCell>
               <TableCell>
                 <span
                   className={cn(

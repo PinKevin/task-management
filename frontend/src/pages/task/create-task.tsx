@@ -40,8 +40,6 @@ export default function CreateTaskPage() {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [date, setDate] = useState<Date | undefined>(undefined);
 
-  console.log(errors);
-
   const handleUserChange = (value: string) => {
     setSelectedUserId(value);
   };
