@@ -26,6 +26,30 @@ export default function TaskPage() {
     setSearchParams(newSearchParams);
   };
 
+  const handleSort = () => {
+    const currentOrder = searchParams.get('deadlineOrder');
+    const newSearchParams = new URLSearchParams(searchParams);
+    let newOrder: string | undefined;
+
+    if (currentOrder === 'ASC') {
+      newOrder = 'DESC';
+    } else if (currentOrder === 'DESC') {
+      newOrder = undefined;
+    } else {
+      newOrder = 'ASC';
+    }
+
+    if (newOrder) {
+      newSearchParams.set('deadlineOrder', newOrder);
+    } else {
+      newSearchParams.delete('deadlineOrder');
+    }
+
+    setSearchParams(newSearchParams);
+  };
+
+  const currentOrder = searchParams.get('deadlineOrder');
+
   return (
     <>
       <div className="flex flex-row justify-between items-center">
@@ -49,11 +73,11 @@ export default function TaskPage() {
             </SelectContent>
           </Select>
           <Button asChild>
-            <Link to={'/task/create'}>Tambah</Link>
+            <Link to={'/tasks/create'}>Tambah</Link>
           </Button>
         </div>
       </div>
-      <DataTable />
+      <DataTable onSort={handleSort} currentDeadlineOrder={currentOrder} />
     </>
   );
 }
