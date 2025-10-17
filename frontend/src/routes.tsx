@@ -14,6 +14,9 @@ import { createTaskAction } from './actions/tasks/create-task.action';
 import ViewTaskPage from './pages/task/view-task';
 import { getOneLoader } from './loader/tasks/get-one-loader';
 import NotFoundTask from './pages/task/not-found-task';
+import EditTaskPage from './pages/task/edit-task';
+import { getOneAndUsersLoader } from './loader/tasks/get-one-and-users-loader';
+import { updateTaskAction } from './actions/tasks/update-task.action';
 
 export const router = createBrowserRouter([
   {
@@ -40,6 +43,13 @@ export const router = createBrowserRouter([
         path: '/tasks/:taskId',
         Component: ViewTaskPage,
         loader: getOneLoader,
+        ErrorBoundary: NotFoundTask,
+      },
+      {
+        path: '/tasks/:taskId/edit',
+        Component: EditTaskPage,
+        loader: getOneAndUsersLoader,
+        action: updateTaskAction,
         ErrorBoundary: NotFoundTask,
       },
     ],

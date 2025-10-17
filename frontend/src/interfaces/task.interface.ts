@@ -21,6 +21,7 @@ export interface TaskDto {
   description: string;
   deadline: string;
   userId: number;
+  status?: TaskStatus;
 }
 
 export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';

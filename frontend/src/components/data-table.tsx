@@ -88,7 +88,7 @@ export function DataTable({ onSort, currentDeadlineOrder }: DataTableProps) {
               <TableCell>
                 <div className="flex flex-row gap-2">
                   <Button asChild variant={'secondary'}>
-                    <Link to={`/tasks/${task.taskId}`}>Ubah</Link>
+                    <Link to={`/tasks/${task.taskId}/edit`}>Ubah</Link>
                   </Button>
                   <Button asChild variant={'destructive'}>
                     <Link to={`/tasks/${task.taskId}`}>Hapus</Link>

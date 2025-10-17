@@ -39,19 +39,19 @@ export async function getAllTasks(query: TaskQueryFilters): Promise<Task[]> {
   return response.json() as Promise<Task[]>;
 }
 
-export async function createTask(loginDto: TaskDto) {
+export async function updateTask(updateDto: TaskDto, taskId: number) {
   const token = getToken();
   if (!token) {
     throw new Error('Not authenticated');
   }
 
-  const response = await fetch(`${BASE_URL}/tasks`, {
-    method: 'POST',
+  const response = await fetch(`${BASE_URL}/tasks/${taskId}`, {
+    method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
     },
-    body: JSON.stringify(loginDto),
+    body: JSON.stringify(updateDto),
   });
 
   if (!response.ok) {
@@ -82,4 +82,26 @@ export async function getTask(id: string): Promise<Task> {
   }
 
   return response.json() as Promise<Task>;
+}
+
+export async function createTask(createDto: TaskDto) {
+  const token = getToken();
+  if (!token) {
+    throw new Error('Not authenticated');
+  }
+
+  const response = await fetch(`${BASE_URL}/tasks`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(createDto),
+  });
+
+  if (!response.ok) {
+    throw response;
+  }
+
+  return response.json();
 }

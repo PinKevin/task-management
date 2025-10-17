@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { getStatusLabel } from '@/helper/get-status-label';
 import { Link, useSearchParams } from 'react-router';
 
 const statusOptions = ['TODO', 'IN_PROGRESS', 'DONE'];
@@ -67,7 +68,7 @@ export default function TaskPage() {
               <SelectItem value="ALL">All Status</SelectItem>
               {statusOptions.map((option) => (
                 <SelectItem key={option} value={option}>
-                  {option}
+                  {getStatusLabel(option)}
                 </SelectItem>
               ))}
             </SelectContent>
