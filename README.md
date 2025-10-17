@@ -17,15 +17,15 @@ Fitur utama meliputi:
 
 ## Teknologi yang Digunakan
 
-| **Komponen**            | **Teknologi Utama**            | **Detail Penting**                                                             |     |     |
-| ----------------------- | ------------------------------ | ------------------------------------------------------------------------------ | --- | --- |
-| Backend (API)           | NestJS (Node.js Framework)     | Menggunakan arsitektur modular dan TypeScript.                                 |     |     |
-| Database                | PostgreSQL                     | Dihubungkan melalui TypeORM.                                                   |     |     |
-| Otentikasi              | JWT (JSON Web Tokens) & Bcrypt | Implementasi AuthGuard dan JwtService untuk melindungi endpoint.               |     |     |
-| Validasi                | Class-Validator                | Digunakan secara global melalui ValidationPipe untuk validasi DTO.             |     |     |
-| Frontend (UI)           | React                          | Menggunakan React v19.x terbaru.                                               |     |     |
-| Routing & Data Fetching | React Router                   | Menggunakan Loaders dan Actions untuk fetching dan modifikasi data deklaratif. |     |     |
-| Styling & UI Library    | Tailwind CSS & Shadcn/ui       | Menggunakan komponen UI modern.                                                |     |     |
+| **Komponen**            | **Teknologi Utama**            | **Detail Penting**                                                             |
+| ----------------------- | ------------------------------ | ------------------------------------------------------------------------------ |
+| Backend (API)           | NestJS (Node.js Framework)     | Menggunakan arsitektur modular dan TypeScript.                                 |
+| Database                | PostgreSQL                     | Dihubungkan melalui TypeORM.                                                   |
+| Otentikasi              | JWT (JSON Web Tokens) & Bcrypt | Implementasi AuthGuard dan JwtService untuk melindungi endpoint.               |
+| Validasi                | Class-Validator                | Digunakan secara global melalui ValidationPipe untuk validasi DTO.             |
+| Frontend (UI)           | React                          | Menggunakan React v19.x terbaru.                                               |
+| Routing & Data Fetching | React Router                   | Menggunakan Loaders dan Actions untuk fetching dan modifikasi data deklaratif. |
+| Styling & UI Library    | Tailwind CSS & Shadcn/ui       | Menggunakan komponen UI modern.                                                |
 
 ## Langkah Menjalankan Backend & Frontend
 
