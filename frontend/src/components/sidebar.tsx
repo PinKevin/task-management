@@ -26,7 +26,7 @@ const data = {
       items: [
         {
           title: 'Task',
-          url: '/task',
+          url: '/tasks',
         },
       ],
     },
