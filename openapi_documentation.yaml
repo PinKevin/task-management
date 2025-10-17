@@ -1,0 +1,652 @@
+openapi: '3.0.3'
+info:
+  title: API Title
+  version: '1.0'
+servers:
+  - url: https://localhost:3000/
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    RegisterDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Manca
+        username:
+          type: string
+          example: milyhya
+        password:
+          type: string
+          format: password
+          example: mainpubg
+        confirmPassword:
+          type: string
+          format: password
+          example: mainpubg
+      required:
+        - name
+        - username
+        - password
+        - confirmPassword
+    LoginDto:
+      type: object
+      properties:
+        username:
+          type: string
+          example: milyhya
+        password:
+          type: string
+          format: password
+          example: mainpubg
+      required:
+        - username
+        - password
+    UserProfile:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+          example: 7
+        name:
+          type: string
+          example: Manca
+        username:
+          type: string
+          example: mily
+      required:
+        - userId
+        - name
+        - username
+    UnauthorizedError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Unauthorized
+        statusCode:
+          type: integer
+          example: 401
+    TaskStatus:
+      type: string
+      enum: [TODO, IN_PROGRESS, DONE]
+    TaskCreateDto:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Laporan Keuangan Q4
+          description: Judul tugas.
+        description:
+          type: string
+          example: Siapkan laporan laba rugi dan neraca.
+          description: Deskripsi tugas.
+        deadline:
+          type: string
+          format: date
+          example: 2025-11-15
+          description: Tanggal batas waktu (format YYYY-MM-DD).
+        userId:
+          type: integer
+          example: 3
+          description: ID pengguna yang ditugaskan (assigned).
+      required:
+        - title
+        - description
+        - deadline
+        - userId
+    TaskSummary:
+      type: object
+      properties:
+        taskId:
+          type: integer
+          example: 11
+        title:
+          type: string
+          example: Rapat Tim Mingguan
+        description:
+          type: string
+          example: Persiapan agenda dan notulensi rapat.
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+        deadline:
+          type: string
+          format: date
+          example: 2025-10-20
+      required:
+        - taskId
+        - title
+        - status
+        - deadline
+    UserSummary:
+      type: object
+      properties:
+        userId:
+          type: integer
+          example: 3
+        name:
+          type: string
+          example: kevin
+        username:
+          type: string
+          example: cosmos
+      required:
+        - userId
+        - name
+        - username
+    TaskDetail:
+      type: object
+      properties:
+        taskId:
+          type: integer
+          example: 11
+        user:
+          $ref: '#/components/schemas/UserSummary'
+          description: Details of the user assigned to the task.
+        title:
+          type: string
+          example: Finalisasi Laporan
+        description:
+          type: string
+          example: Review dan kirimkan laporan Q4.
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+        deadline:
+          type: string
+          format: date
+          example: 2025-10-18
+        creator:
+          $ref: '#/components/schemas/UserSummary'
+          description: Details of the user who created the task.
+      required:
+        - taskId
+        - title
+        - status
+        - deadline
+    TaskUpdateDto:
+      type: object
+      description: Task fields that can be partially updated.
+      properties:
+        userId:
+          type: integer
+          example: 2
+        title:
+          type: string
+          example: Review Laporan Q4
+        description:
+          type: string
+          example: Detail deskripsi baru.
+        deadline:
+          type: string
+          format: date
+          example: 2025-10-17
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+    NotFoundError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Task not found
+        error:
+          type: string
+          example: Not Found
+        statusCode:
+          type: integer
+          example: 404
+    UserSummaryDetail:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+          example: 1
+          description: Unique ID of the user.
+        name:
+          type: string
+          example: Kevin Chandra
+          description: Full name of the user.
+        username:
+          type: string
+          example: kvn
+          description: Unique username used for login.
+      required:
+        - userId
+        - name
+        - username
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      operationId: registerUser
+      description: Creates a new user account in the system.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterDto'
+            example:
+              name: Manca
+              username: milyhya
+              password: mainpubg
+              confirmPassword: mainpubg
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: Manca
+                  username:
+                    type: string
+                    example: mily
+        '400':
+          description: Bad Request (Validation failed)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: array
+                    items:
+                      type: string
+                      example: confirmPassword must match password
+                  error:
+                    type: string
+                    example: Bad Request
+                  statusCode:
+                    type: integer
+                    example: 400
+        '409':
+          description: Conflict (Username already used)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Username already used
+                  error:
+                    type: string
+                    example: Conflict
+                  statusCode:
+                    type: integer
+                    example: 409
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login to the system
+      operationId: loginUser
+      description: Authenticates the user and returns an access token (JWT).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDto'
+            example:
+              username: milyhya
+              password: mainpubg
+      responses:
+        '200':
+          description: Login successful, returns access token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    description: JWT used for subsequent authenticated requests.
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsInVzZXJuYW1lIjoibWlseSIsIm5hbWUiOiJNYW5jYSIsImlhdCI6MTc2MDY4MDM0MSwiZXhwIjoxNzYxMjg1MTQxfQ.qymFP0XhOGSUU3kGA2BkJbw4YayqL1iQakPu5k-ATHc
+        '400':
+          description: Bad Request (Validation failed for empty fields)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: array
+                    items:
+                      type: string
+                      example: username should not be empty
+                  error:
+                    type: string
+                    example: Bad Request
+                  statusCode:
+                    type: integer
+                    example: 400
+        '401':
+          description: Unauthorized (Wrong credentials)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Wrong username or password
+                  error:
+                    type: string
+                    example: Unauthorized
+                  statusCode:
+                    type: integer
+                    example: 401
+  /auth/profile:
+    get:
+      tags:
+        - Authentication
+      summary: Get user profile details
+      operationId: getUserProfile
+      description: Retrieves the profile details of the currently authenticated user.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful retrieval of user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '401':
+          description: Unauthorized (Missing or invalid token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+
+  /tasks:
+    post:
+      tags:
+        - Task Management
+      summary: Create a new task
+      operationId: createTask
+      description: Creates a new task and assigns it to a user. Requires authentication.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreateDto'
+            example:
+              title: Laporan Keuangan Q4
+              description: Siapkan laporan laba rugi dan neraca.
+              deadline: 2025-11-15
+              userId: 3
+      responses:
+        '201':
+          description: Task created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Successfully create new task
+        '400':
+          description: Bad Request (Validation failed)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: array
+                    items:
+                      type: string
+                      example: userId should not be equal to 0
+                  error:
+                    type: string
+                    example: Bad Request
+                  statusCode:
+                    type: integer
+                    example: 400
+        '401':
+          description: Unauthorized (Missing or invalid token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+    get:
+      tags:
+        - Task Management
+      summary: Get a list of all tasks
+      operationId: getAllTasks
+      description: Retrieves a list of tasks with filtering by status and sorting by deadline.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: deadlineOrder
+          in: query
+          description: Sort order for the task deadline.
+          required: false
+          schema:
+            type: string
+            enum: [ASC, DESC]
+          example: ASC
+        - name: status
+          in: query
+          description:
+            Filter tasks by status. Can be provided multiple times (e.g., ?status=TODO&status=DONE).
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [TODO, IN_PROGRESS, DONE]
+          example: TODO
+      responses:
+        '200':
+          description: Successful retrieval of the task list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskSummary'
+              example:
+                - taskId: 11
+                  title: Rapat Tim Mingguan
+                  description: Persiapan agenda dan notulensi rapat.
+                  status: TODO
+                  deadline: 2025-10-20
+        '401':
+          description: Unauthorized (Missing or invalid token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+
+  /tasks/{taskId}:
+    get:
+      tags:
+        - Task Management
+      summary: Get task details by ID
+      operationId: getTaskById
+      description: Retrieves the detailed information for a specific task.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: taskId
+          in: path
+          description: Unique ID of the task to retrieve.
+          required: true
+          schema:
+            type: integer
+            example: 11
+      responses:
+        '200':
+          description: Successful retrieval of task details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDetail'
+        '401':
+          description: Unauthorized (Missing or invalid token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+        '404':
+          description: Not Found (Task does not exist)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+    patch:
+      tags:
+        - Task Management
+      summary: Update existing task details
+      operationId: updateTask
+      description:
+        Allows partial updates (PATCH) to task details such as title, description, deadline,
+        assigned user, or status.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: taskId
+          in: path
+          description: Unique ID of the task to update.
+          required: true
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdateDto'
+            example:
+              userId: 2
+              status: IN_PROGRESS # Contoh yang valid
+      responses:
+        '200':
+          description: Task updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Successfully edit task
+        '400':
+          description: Bad Request (Validation failed)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: array
+                    items:
+                      type: string
+                      example: 'status must be one of the following values: TODO, IN_PROGRESS, DONE'
+                  error:
+                    type: string
+                    example: Bad Request
+                  statusCode:
+                    type: integer
+                    example: 400
+        '404':
+          description: Not Found (Task does not exist)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '401':
+          description: Unauthorized (Missing or invalid token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+    delete:
+      tags:
+        - Task Management
+      summary: Delete a task
+      operationId: deleteTask
+      description: Deletes a specific task permanently from the system. Requires authentication.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: taskId
+          in: path
+          description: Unique ID of the task to delete.
+          required: true
+          schema:
+            type: integer
+            example: 6
+      responses:
+        '200':
+          description: Task deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Successfully deleted task
+        '404':
+          description: Not Found (Task does not exist)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '401':
+          description: Unauthorized (Missing or invalid token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+  /users:
+    get:
+      tags:
+        - User Management
+      summary: Get list of all users
+      operationId: getAllUsers
+      description: Retrieves a list of all registered users, primarily used for assigning tasks.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful retrieval of user list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserSummaryDetail'
+              example:
+                - userId: 1
+                  name: kevin
+                  username: kvn
+                - userId: 7
+                  name: Manca
+                  username: mily
+        '401':
+          description: Unauthorized (Missing or invalid token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
