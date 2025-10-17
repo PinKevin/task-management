@@ -8,6 +8,9 @@ import DashboardPage from './pages/dashboard';
 import { guestLoader, protectedLoader } from './loader/auth-loader';
 import TaskPage from './pages/task/task';
 import { getAllTaskLoader } from './loader/tasks/get-all-loader';
+import CreateTaskPage from './pages/task/create-task';
+import { getAllUserLoader } from './loader/users/get-all-loader';
+import { createTaskAction } from './actions/tasks/create-task.action';
 
 export const router = createBrowserRouter([
   {
@@ -20,9 +23,15 @@ export const router = createBrowserRouter([
         Component: DashboardPage,
       },
       {
-        path: '/task',
+        path: '/tasks',
         Component: TaskPage,
         loader: getAllTaskLoader,
+      },
+      {
+        path: '/tasks/create',
+        Component: CreateTaskPage,
+        loader: getAllUserLoader,
+        action: createTaskAction,
       },
     ],
   },

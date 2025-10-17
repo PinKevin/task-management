@@ -6,4 +6,11 @@ export interface Task {
   deadline: string;
 }
 
+export interface TaskDto {
+  title: string;
+  description: string;
+  deadline: string;
+  userId: number;
+}
+
 export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';

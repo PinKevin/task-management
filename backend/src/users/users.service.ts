@@ -28,6 +28,10 @@ export class UsersService {
     return await this.userRepository.findOneBy({ userId });
   }
 
+  async findAllUser() {
+    return this.userRepository.find();
+  }
+
   async createUser(createUserDto: CreateUserDto) {
     const existingUser = await this.userRepository.findOne({
       where: { username: createUserDto.username },

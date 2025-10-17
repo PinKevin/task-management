@@ -1,5 +1,5 @@
 import { getToken } from '@/helper/access-token-helper';
-import type { Task } from '@/interfaces/task.interface';
+import type { Task, TaskDto } from '@/interfaces/task.interface';
 import { BASE_URL } from '@/lib/api';
 
 export interface TaskQueryFilters {
@@ -37,4 +37,26 @@ export async function getAllTasks(query: TaskQueryFilters): Promise<Task[]> {
   }
 
   return response.json() as Promise<Task[]>;
+}
+
+export async function createTask(loginDto: TaskDto) {
+  const token = getToken();
+  if (!token) {
+    throw new Error('Not authenticated');
+  }
+
+  const response = await fetch(`${BASE_URL}/tasks`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(loginDto),
+  });
+
+  if (!response.ok) {
+    throw response;
+  }
+
+  return response.json();
 }
