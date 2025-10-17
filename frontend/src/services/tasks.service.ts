@@ -61,13 +61,13 @@ export async function updateTask(updateDto: TaskDto, taskId: number) {
   return response.json();
 }
 
-export async function getTask(id: string): Promise<Task> {
+export async function getTask(taskId: number): Promise<Task> {
   const token = getToken();
   if (!token) {
     throw new Error('Not authenticated');
   }
 
-  const url = `${BASE_URL}/tasks/${id}`;
+  const url = `${BASE_URL}/tasks/${taskId}`;
 
   const response = await fetch(url, {
     method: 'GET',
@@ -97,6 +97,29 @@ export async function createTask(createDto: TaskDto) {
       'Authorization': `Bearer ${token}`,
     },
     body: JSON.stringify(createDto),
+  });
+
+  if (!response.ok) {
+    throw response;
+  }
+
+  return response.json();
+}
+
+export async function deleteTask(taskId: number) {
+  const token = getToken();
+  if (!token) {
+    throw new Error('Not authenticated');
+  }
+
+  const url = `${BASE_URL}/tasks/${taskId}`;
+
+  const response = await fetch(url, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
   });
 
   if (!response.ok) {

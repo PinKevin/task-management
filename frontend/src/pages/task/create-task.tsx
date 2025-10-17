@@ -17,7 +17,7 @@ import type { User } from '@/interfaces/user.interface';
 import { cn } from '@/lib/utils';
 import { CalendarIcon } from 'lucide-react';
 import { useState } from 'react';
-import { Form, useActionData, useLoaderData } from 'react-router';
+import { Form, Link, useActionData, useLoaderData } from 'react-router';
 
 interface UsersData {
   users: User[];
@@ -121,6 +121,12 @@ export default function CreateTaskPage() {
           </Field>
         </FieldGroup>
       </Form>
+
+      <Button asChild variant={'secondary'}>
+        <Link to={'/tasks'} className="text-lg mt-3">
+          Kembali
+        </Link>
+      </Button>
     </>
   );
 }

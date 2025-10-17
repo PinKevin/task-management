@@ -4,13 +4,14 @@ import type { LoaderFunctionArgs } from 'react-router';
 
 export async function getOneAndUsersLoader({ params }: LoaderFunctionArgs) {
   const taskId = params.taskId;
+  const numericTaskId = Number(taskId!.toString());
 
   if (!taskId) {
     throw new Response('ID tugas tidak ditemukan dalam URL.', { status: 400 });
   }
 
   try {
-    const [task, users] = await Promise.all([getTask(taskId), getAllUsers()]);
+    const [task, users] = await Promise.all([getTask(numericTaskId), getAllUsers()]);
 
     return { task, users };
   } catch (error) {

@@ -17,7 +17,7 @@ import type { User } from '@/interfaces/user.interface';
 import { cn } from '@/lib/utils';
 import { CalendarIcon } from 'lucide-react';
 import { useState } from 'react';
-import { Form, useActionData, useLoaderData, useParams } from 'react-router';
+import { Form, Link, useActionData, useLoaderData, useParams } from 'react-router';
 import type { Task, TaskStatus } from '@/interfaces/task.interface';
 import { getStatusLabel } from '@/helper/get-status-label';
 
@@ -170,6 +170,12 @@ export default function EditTaskPage() {
           </Field>
         </FieldGroup>
       </Form>
+
+      <Button asChild variant={'secondary'}>
+        <Link to={'/tasks'} className="text-lg mt-3">
+          Kembali
+        </Link>
+      </Button>
     </>
   );
 }

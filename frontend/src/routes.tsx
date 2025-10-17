@@ -17,6 +17,7 @@ import NotFoundTask from './pages/task/not-found-task';
 import EditTaskPage from './pages/task/edit-task';
 import { getOneAndUsersLoader } from './loader/tasks/get-one-and-users-loader';
 import { updateTaskAction } from './actions/tasks/update-task.action';
+import { deleteTaskAction } from './actions/tasks/delete-tas.action';
 
 export const router = createBrowserRouter([
   {
@@ -51,6 +52,10 @@ export const router = createBrowserRouter([
         loader: getOneAndUsersLoader,
         action: updateTaskAction,
         ErrorBoundary: NotFoundTask,
+      },
+      {
+        path: '/tasks/:taskId/delete',
+        action: deleteTaskAction,
       },
     ],
   },
